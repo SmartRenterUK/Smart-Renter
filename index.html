@@ -217,7 +217,7 @@
         <div class="card-header">
           <div>
             <div class="card-region">ONS region</div>
-            <div class="card-area">london</div>
+            <div class="card-area">London</div>
           </div>
           <span class="card-badge">above average</span>
         </div>
@@ -271,12 +271,14 @@
       <div class="section-label">get early access</div>
       <h2 class="section-title">be first to <em>check your rent</em></h2>
       <p class="section-sub">Smart Renter is launching soon. Enter your email and we'll let you know the moment our rent checker goes live — plus early access to our full rights guide.</p>
-      <form class="email-form" onsubmit="handleSubmit(event)">
-        <input type="email" class="email-input" placeholder="your@email.co.uk" required id="emailInput" />
-        <button type="submit" class="email-btn">notify me</button>
+      <form action="https://smartrenter.us5.list-manage.com/subscribe/post?u=1e9f97518636a1eab00062750&amp;id=e72dcd333a&amp;f_id=003c53e3f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" class="email-form">
+        <input type="email" name="EMAIL" class="email-input" placeholder="your@email.co.uk" required id="mce-EMAIL" />
+        <div aria-hidden="true" style="position: absolute; left: -5000px;">
+          <input type="text" name="b_1e9f97518636a1eab00062750_e72dcd333a" tabindex="-1" value="">
+        </div>
+        <button type="submit" name="subscribe" class="email-btn">notify me</button>
       </form>
       <p class="email-note">unsubscribe any time.</p>
-      <div id="successMsg">✅ you're on the list. we'll be in touch soon.</div>
     </div>
   </section>
 
@@ -415,12 +417,6 @@
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-    function handleSubmit(e) {
-      e.preventDefault();
-      document.getElementById('emailInput').closest('.email-form').style.display = 'none';
-      document.getElementById('successMsg').style.display = 'block';
-    }
   </script>
 
 </body>
