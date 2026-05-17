@@ -244,7 +244,7 @@
     <!-- HEADER -->
     <div class="page-label">free tool</div>
     <h1 class="page-title">is your rent increase <em>fair?</em></h1>
-    <p class="page-sub">Enter your details below and we'll compare your landlord's proposed increase against official ONS data for your area — so you know exactly where you stand.</p>
+    <p class="page-sub">Enter your details below and we'll compare your landlord's proposed increase against data for your area — so you know exactly where you stand.</p>
 
     <!-- FORM -->
     <div class="form-card">
@@ -370,8 +370,8 @@
         <p class="considerations-intro">These factors can affect whether a rent is genuinely market rate — they're worth thinking about when assessing your landlord's proposed increase.</p>
         <ul class="consideration-list">
           <li><span class="ci">🏢</span><div><strong>Floor level</strong> — higher floors often command a premium, particularly in purpose-built blocks. Ground floor flats may be valued lower, especially if they lack natural light or private outdoor space.</div></li>
-          <li><span class="ci">🌿</span><div><strong>Outside space</strong> — a garden, terrace, or private balcony can add meaningful value to a property's market rent. Properties without any outdoor access are typically priced lower.</div></li>
-          <li><span class="ci">🛋️</span><div><strong>Furnished vs unfurnished</strong> — furnished properties often carry a higher rent, but this varies by area. In some markets, tenants prefer unfurnished and will pay a similar amount.</div></li>
+          <li><span class="ci">🌿</span><div><strong>Outside space</strong> — a garden, terrace, or private balcony can add meaningful value to a property's market rent.</div></li>
+          <li><span class="ci">🛋️</span><div><strong>Furnished vs unfurnished</strong> — furnished properties often carry a higher rent.</div></li>
           <li><span class="ci">🔧</span><div><strong>Condition and recent works</strong> — if your landlord has recently refurbished the property, this may support a higher rent. Equally, if there are outstanding maintenance issues, this can be a reason to push back.</div></li>
           <li><span class="ci">📍</span><div><strong>Hyper-local factors</strong> — proximity to a tube or train station, new developments, school catchment areas, and changes to local amenities can all affect rents street by street — not just borough by borough.</div></li>
           <li><span class="ci">📅</span><div><strong>When your tenancy started</strong> — if your rent hasn't been increased in several years, your landlord may have a stronger case for a larger catch-up increase, even if it feels steep.</div></li>
@@ -602,7 +602,7 @@
           banner.className = 'verdict-banner above';
           icon.textContent = '⚠️';
           title.textContent = 'your increase is above the regional average';
-          body.textContent = `Your landlord is proposing a ${yourIncrease.toFixed(1)}% increase, which is ${diff.toFixed(1)} percentage points above the ${regionalData.label} average of ${regionalAvg}%. This may be worth challenging — especially if the property or local market doesn't justify the difference.`;
+          body.textContent = `Your landlord is proposing a ${yourIncrease.toFixed(1)}% increase, which is ${diff.toFixed(1)} percentage points above the ${regionalData.label} average of ${regionalAvg}%. This may be worth challenging.`;
         } else if (diff < -2) {
           banner.className = 'verdict-banner below';
           icon.textContent = '✅';
