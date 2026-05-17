@@ -7,15 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;0,800;1,700&family=Barlow+Condensed:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFK1X6N0TM"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-RFK1X6N0TM');
-  </script>
   <style>
     :root {
       --green:        #4A7C2F;
@@ -64,6 +55,16 @@
     .hero h1 em { font-style: italic; color: var(--green); }
     .hero-sub { font-size: 17px; color: var(--ink-mid); line-height: 1.75; margin-bottom: 2.5rem; font-weight: 300; max-width: 460px; }
     .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    /* HERO CHECKER */
+    .hero-checker { margin-bottom: 0.5rem; }
+    .checker-input-wrap { display: flex; gap: 0; max-width: 420px; background: var(--white); border: 1.5px solid var(--border); border-radius: 100px; padding: 4px; box-shadow: 0 4px 16px rgba(26,26,26,0.08); transition: border-color 0.2s; }
+    .checker-input-wrap:focus-within { border-color: var(--green); }
+    .checker-input { flex: 1; height: 44px; padding: 0 16px; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink); outline: none; text-transform: uppercase; letter-spacing: 0.05em; }
+    .checker-input::placeholder { color: var(--ink-soft); text-transform: none; letter-spacing: 0; }
+    .checker-btn { height: 44px; padding: 0 20px; background: var(--ink); color: var(--linen); border: none; border-radius: 100px; font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 700; text-transform: lowercase; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 7px; white-space: nowrap; flex-shrink: 0; }
+    .checker-btn:hover { background: var(--green); }
+    .checker-note { font-size: 12px; color: var(--ink-soft); margin-top: 0.6rem; font-weight: 300; }
 
     /* BUTTONS */
     .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: var(--linen); padding: 13px 26px; border-radius: 100px; font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 700; text-transform: lowercase; transition: all 0.2s; border: none; cursor: pointer; }
@@ -213,11 +214,17 @@
         <p class="hero-sub">
           Smart Renter helps UK tenants understand their rights, challenge unfair rent increases, and navigate the tribunal process — in plain English, without a solicitor.
         </p>
-        <div class="hero-actions">
-          <a href="#waitlist" class="btn-primary">
-            check my area for free
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </a>
+        <div class="hero-checker">
+          <div class="checker-input-wrap">
+            <input type="text" id="heroPostcode" class="checker-input" placeholder="enter your postcode" maxlength="8" autocomplete="postal-code" />
+            <button class="checker-btn" onclick="goToChecker()">
+              check my rent
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <p class="checker-note">free tool · no sign-up required · takes 2 minutes</p>
+        </div>
+        <div class="hero-actions" style="margin-top:1rem;">
           <a href="#your-rights" class="btn-secondary">know my rights</a>
         </div>
       </div>
@@ -277,9 +284,9 @@
   <!-- EMAIL CAPTURE -->
   <section class="email-section" id="waitlist">
     <div class="email-inner">
-      <div class="section-label">get early access</div>
-      <h2 class="section-title">be first to <em>check your rent</em></h2>
-      <p class="section-sub">Smart Renter is launching soon. Enter your email and we'll let you know the moment our rent checker goes live — plus early access to our full rights guide.</p>
+      <div class="section-label">early access</div>
+      <h2 class="section-title">our rent checker is <em>live</em></h2>
+      <p class="section-sub">Try the free rent checker above. Sign up below for early access to our full rights guide and tribunal challenge pack — launching soon.</p>
       <form action="https://smartrenter.us5.list-manage.com/subscribe/post?u=1e9f97518636a1eab00062750&amp;id=e72dcd333a&amp;f_id=003c53e3f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" class="email-form">
         <input type="email" name="EMAIL" class="email-input" placeholder="your@email.co.uk" required id="mce-EMAIL" />
         <div aria-hidden="true" style="position: absolute; left: -5000px;">
@@ -414,7 +421,7 @@
         <li><a href="#waitlist">early access</a></li>
         <li><a href="privacy.html">privacy policy</a></li>
       </ul>
-      <span class="footer-copy">© 2025 smart renter</span>
+      <span class="footer-copy">© 2026 smart renter</span>
     </div>
     <div class="footer-disclaimer">
       Smart Renter provides general information to help tenants understand their rights. This is not legal advice and should not be relied upon as such. Smart Renter is not a law firm and no lawyer-client relationship is created by using this site.
@@ -422,6 +429,22 @@
   </footer>
 
   <script>
+    function goToChecker() {
+      const postcode = document.getElementById('heroPostcode').value.trim();
+      const url = postcode
+        ? `rentchecker.html?postcode=${encodeURIComponent(postcode)}`
+        : 'rentchecker.html';
+      window.location.href = url;
+    }
+
+    document.getElementById('heroPostcode').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') goToChecker();
+    });
+
+    document.getElementById('heroPostcode').addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
+    });
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.1 });
