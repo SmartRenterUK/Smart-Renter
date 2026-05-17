@@ -367,7 +367,7 @@
       <!-- OTHER THINGS TO CONSIDER -->
       <div class="considerations-card">
         <h3>other things to consider</h3>
-        <p class="considerations-intro">These factors can affect whether a rent is genuinely market rate — they're worth thinking about when assessing your landlord's proposed increase.</p>
+        <p class="considerations-intro">These factors can affect whether a rent is genuinely market rate.</p>
         <ul class="consideration-list">
           <li><span class="ci">🏢</span><div><strong>Floor level</strong> — higher floors often command a premium, particularly in purpose-built blocks. Ground floor flats may be valued lower, especially if they lack natural light or private outdoor space.</div></li>
           <li><span class="ci">🌿</span><div><strong>Outside space</strong> — a garden, terrace, or private balcony can add meaningful value to a property's market rent.</div></li>
@@ -602,12 +602,12 @@
           banner.className = 'verdict-banner above';
           icon.textContent = '⚠️';
           title.textContent = 'your increase is above the regional average';
-          body.textContent = `Your landlord is proposing a ${yourIncrease.toFixed(1)}% increase, which is ${diff.toFixed(1)} percentage points above the ${regionalData.label} average of ${regionalAvg}%. This may be worth challenging.`;
+          body.textContent = `Your landlord is proposing a ${yourIncrease.toFixed(1)}% increase, which is ${diff.toFixed(1)}% above the ${regionalData.label} average of ${regionalAvg}%. This may be worth challenging.`;
         } else if (diff < -2) {
           banner.className = 'verdict-banner below';
           icon.textContent = '✅';
           title.textContent = 'your increase is below the regional average';
-          body.textContent = `Your landlord is proposing a ${yourIncrease.toFixed(1)}% increase, which is ${Math.abs(diff).toFixed(1)} percentage points below the ${regionalData.label} average of ${regionalAvg}%. This looks broadly in line with or better than the market.`;
+          body.textContent = `Your landlord is proposing a ${yourIncrease.toFixed(1)}% increase, which is ${Math.abs(diff).toFixed(1)}% below the ${regionalData.label} average of ${regionalAvg}%. This looks broadly in line with or better than the market.`;
         } else {
           banner.className = 'verdict-banner inline';
           icon.textContent = '📊';
@@ -645,7 +645,9 @@
         const upper = medianData.upper[bedrooms];
 
         const yourPosition = currentRent < lower ? 'below the lower quartile — well below the typical market range'
-          : currentRent <= median ? 'in the lower half of the market range'
+          : currentRent === median ? 'right at the median for the market — exactly in line with the typical rent'
+          : Math.abs(currentRent - median) / median < 0.03 ? 'broadly at the median for the market — in line with the typical rent'
+          : currentRent < median ? 'in the lower half of the market range'
           : currentRent <= upper ? 'in the upper half of the market range'
           : 'above the upper quartile — at the top end of the market range';
 
