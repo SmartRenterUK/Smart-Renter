@@ -371,7 +371,7 @@
           <h3>want to challenge your rent increase?</h3>
           <p>Get a personalised tribunal challenge pack — your letter, evidence checklist, comparables worksheet and form walkthrough, built from your details.</p>
         </div>
-        <a href="tribunalpack.html" class="cta-btn">
+        <a href="tribunalpack.html" class="cta-btn" id="tribunalPackCta">
           get my tribunal pack
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -668,6 +668,15 @@
 
         document.getElementById('yourRentMarker').innerHTML =
           `Your current rent of <strong>£${currentRent.toLocaleString()}/month</strong> is ${yourPosition} for ${BEDROOM_LABELS[bedrooms]} in ${regionalData.label}.`;
+
+        // Carry the person's answers through to the tribunal pack flow
+        const packParams = new URLSearchParams({
+          postcode: postcode,
+          bedrooms: bedrooms,
+          currentRent: currentRent,
+          newRent: newRent,
+        });
+        document.getElementById('tribunalPackCta').href = `tribunalpack.html?${packParams.toString()}`;
 
         // Show results
         document.getElementById('results').style.display = 'block';
