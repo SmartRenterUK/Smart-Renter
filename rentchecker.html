@@ -55,6 +55,8 @@
     .nav-links a:hover { color: var(--green); }
     .nav-cta { background: var(--ink) !important; color: var(--linen) !important; padding: 8px 20px; border-radius: 100px; font-size: 14px !important; font-weight: 600 !important; transition: background 0.2s !important; }
     .nav-cta:hover { background: var(--green) !important; color: var(--white) !important; }
+    .nav-cta-pack { background: var(--green) !important; color: var(--white) !important; padding: 8px 20px; border-radius: 100px; font-size: 14px !important; font-weight: 600 !important; transition: background 0.2s !important; }
+    .nav-cta-pack:hover { background: var(--green-dark) !important; }
 
     /* PAGE LAYOUT */
     .page { max-width: 780px; margin: 0 auto; padding: 100px 2.5rem 6rem; }
@@ -93,7 +95,6 @@
 
     .postcode-wrap { position: relative; }
     .postcode-wrap input { text-transform: uppercase; letter-spacing: 0.05em; }
-    .postcode-status { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 13px; }
 
     .pound-wrap { position: relative; }
     .pound-wrap::before { content: '£'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); font-size: 15px; z-index: 1; }
@@ -235,7 +236,8 @@
       <li><a href="index.html#how-it-works">how it works</a></li>
       <li><a href="index.html#your-rights">your rights</a></li>
       <li><a href="index.html#help">get help</a></li>
-      <li><a href="index.html#waitlist" class="nav-cta">get early access</a></li>
+      <li><a href="index.html#waitlist" class="nav-cta">updates</a></li>
+      <li><a href="tribunalpack.html" class="nav-cta-pack">tribunal pack</a></li>
     </ul>
   </nav>
 
@@ -255,7 +257,6 @@
           <label>postcode <span class="label-hint">we use this to find your region</span></label>
           <div class="postcode-wrap">
             <input type="text" id="postcode" placeholder="e.g. SW1A 1AA" maxlength="8" autocomplete="postal-code" />
-            <span class="postcode-status" id="postcodeStatus"></span>
           </div>
           <span class="error-msg" id="postcodeError">Please enter a valid UK postcode.</span>
         </div>
@@ -396,7 +397,7 @@
       </div>
 
       <div class="data-source">
-        Data sources: <a href="https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/privaterentandhousepricesuk/april2026" target="_blank" rel="noopener">ONS Price Index of Private Rents, April 2026</a> · <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/housing/bulletins/privaterentalmarketsummarystatisticsinengland/april2022tomarch2023" target="_blank" rel="noopener">ONS Private Rental Market Summary Statistics</a>
+        Data sources: <a href="https://www.ons.gov.uk/economy/inflationandpriceindices/bulletins/privaterentandhousepricesuk/april2026" target="_blank" rel="noopener">ONS Price Index of Private Rents, April 2026</a> · <a href="https://www.ons.gov.uk/peoplepopulationandcommunity/housing/bulletins/privaterentalmarketsummarystatisticsinengland/latest" target="_blank" rel="noopener">ONS Private Rental Market Summary Statistics</a>
       </div>
 
     </div>
@@ -416,7 +417,7 @@
         <li><a href="index.html#how-it-works">how it works</a></li>
         <li><a href="index.html#your-rights">your rights</a></li>
         <li><a href="index.html#help">get help</a></li>
-        <li><a href="index.html#waitlist">early access</a></li>
+        <li><a href="index.html#waitlist">updates</a></li>
         <li><a href="privacy.html">privacy policy</a></li>
       </ul>
       <span class="footer-copy">© 2026 smart renter</span>
@@ -539,7 +540,6 @@
       const newRent = parseFloat(document.getElementById('newRent').value);
 
       document.getElementById('postcodeError').style.display = postcode ? 'none' : 'block';
-      document.getElementById('postcodeStatus').textContent = '';
       if (!postcode) valid = false;
 
       document.getElementById('bedroomsError').style.display = bedrooms ? 'none' : 'block';
