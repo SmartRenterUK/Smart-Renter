@@ -71,6 +71,8 @@
     .btn-primary:hover { background: var(--green); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,124,47,0.25); }
     .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--ink); padding: 13px 26px; border-radius: 100px; font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 600; text-transform: lowercase; border: 1.5px solid var(--border); transition: all 0.2s; cursor: pointer; }
     .btn-secondary:hover { border-color: var(--green); color: var(--green); }
+    .btn-pack { display: inline-flex; align-items: center; gap: 8px; background: var(--green); color: var(--white); padding: 13px 26px; border-radius: 100px; font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 700; text-transform: lowercase; transition: all 0.2s; border: none; cursor: pointer; box-shadow: 0 4px 16px rgba(74,124,47,0.2); }
+    .btn-pack:hover { background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,124,47,0.3); }
 
     /* HERO CARD */
     .hero-card { background: var(--white); border-radius: var(--radius-lg); padding: 1.75rem; box-shadow: 0 24px 64px rgba(26,26,26,0.10), 0 4px 16px rgba(26,26,26,0.04); border: 1px solid var(--border); animation: float 6s ease-in-out infinite; }
@@ -225,6 +227,10 @@
           <p class="checker-note">free tool · no sign-up required · takes 2 minutes</p>
         </div>
         <div class="hero-actions" style="margin-top:1rem;">
+          <a href="tribunalpack.html" class="btn-pack">
+            get my tribunal pack — £19.99
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
           <a href="#your-rights" class="btn-secondary">know my rights</a>
         </div>
       </div>
@@ -284,9 +290,9 @@
   <!-- EMAIL CAPTURE -->
   <section class="email-section" id="waitlist">
     <div class="email-inner">
-      <div class="section-label">early access</div>
-      <h2 class="section-title">our rent checker is <em>live</em></h2>
-      <p class="section-sub">Try the free rent checker above. Sign up below for early access to our full rights guide and tribunal challenge pack — launching soon.</p>
+      <div class="section-label">stay updated</div>
+      <h2 class="section-title">both tools are <em>live</em></h2>
+      <p class="section-sub">Try the free rent checker above, or get your personalised tribunal challenge pack. Sign up below to hear about new features as we build out Smart Renter — disrepair, deposits, evictions and more.</p>
       <form action="https://smartrenter.us5.list-manage.com/subscribe/post?u=1e9f97518636a1eab00062750&amp;id=e72dcd333a&amp;f_id=003c53e3f0" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" target="_blank" class="email-form">
         <input type="email" name="EMAIL" class="email-input" placeholder="your@email.co.uk" required id="mce-EMAIL" />
         <div aria-hidden="true" style="position: absolute; left: -5000px;">
@@ -352,7 +358,7 @@
         <div class="section-label">the renters rights act</div>
         <h2 class="section-title">the biggest shift in tenant rights in a <em>generation</em></h2>
         <p class="section-sub">The Renters Rights Act fundamentally changed the balance of power between landlords and tenants in England. For the first time, tenants have real tools to push back — but most people don't know how to use them. Smart Renter exists to change that.</p>
-        <a href="#waitlist" class="btn-primary">
+        <a href="rentchecker.html" class="btn-primary">
           check my rights now
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -418,7 +424,7 @@
         <li><a href="#how-it-works">how it works</a></li>
         <li><a href="#your-rights">your rights</a></li>
         <li><a href="#help">get help</a></li>
-        <li><a href="#waitlist">early access</a></li>
+        <li><a href="#waitlist">updates</a></li>
         <li><a href="privacy.html">privacy policy</a></li>
       </ul>
       <span class="footer-copy">© 2026 smart renter</span>
