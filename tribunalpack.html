@@ -96,6 +96,9 @@
     input::placeholder, textarea::placeholder { color: var(--ink-soft); }
     textarea { height: auto; min-height: 100px; padding: 12px 16px; resize: vertical; }
 
+    .error-msg { font-size: 13px; color: var(--red); margin-top: 6px; display: none; }
+    input.error, select.error { border-color: var(--red); }
+
     .pound-wrap { position: relative; }
     .pound-wrap::before { content: '£'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); font-size: 15px; z-index: 1; }
     .pound-wrap input { padding-left: 28px; }
@@ -176,6 +179,9 @@
     .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
     .footer-logo .logo-text { color: var(--white); font-size: 18px; }
     .footer-tagline { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 4px; font-weight: 300; }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a { font-size: 13px; color: rgba(255,255,255,0.4); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--white); }
     .footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
     .footer-disclaimer { max-width: 1100px; margin: 1.5rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 11px; color: rgba(255,255,255,0.2); line-height: 1.7; }
 
@@ -185,6 +191,7 @@
       .two-col { grid-template-columns: 1fr; }
       .pay-card { flex-direction: column; }
       .btn-row { flex-wrap: wrap; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
@@ -230,6 +237,7 @@
         <div class="field-group">
           <label>postcode</label>
           <input type="text" id="s1_postcode" placeholder="e.g. SW1A 1AA" maxlength="8" />
+          <span class="error-msg" id="s1_postcodeError">Please enter your postcode.</span>
         </div>
         <div class="field-group">
           <label>bedrooms</label>
@@ -242,6 +250,7 @@
             <option value="3">3 bedrooms</option>
             <option value="4">4+ bedrooms</option>
           </select>
+          <span class="error-msg" id="s1_bedroomsError">Please select a bedroom type.</span>
         </div>
       </div>
 
@@ -249,25 +258,29 @@
         <div class="field-group">
           <label>current rent <span class="field-hint">per month</span></label>
           <div class="pound-wrap"><input type="number" id="s1_currentRent" placeholder="1200" min="1" /></div>
+          <span class="error-msg" id="s1_currentRentError">Please enter your current rent.</span>
         </div>
         <div class="field-group">
           <label>proposed new rent <span class="field-hint">per month</span></label>
           <div class="pound-wrap"><input type="number" id="s1_newRent" placeholder="1350" min="1" /></div>
+          <span class="error-msg" id="s1_newRentError">Please enter the proposed new rent.</span>
         </div>
       </div>
 
       <div class="field-group">
         <label>your landlord's name <span class="field-hint">for your letter</span></label>
         <input type="text" id="s1_landlordName" placeholder="e.g. John Smith or Acme Properties Ltd" />
+        <span class="error-msg" id="s1_landlordNameError">Please enter your landlord's name.</span>
       </div>
 
       <div class="field-group">
         <label>your name</label>
         <input type="text" id="s1_tenantName" placeholder="your full name" />
+        <span class="error-msg" id="s1_tenantNameError">Please enter your name.</span>
       </div>
 
       <div class="btn-row">
-        <button class="btn-next" onclick="goTo(2)">
+        <button class="btn-next" onclick="goToNext(2)">
           continue
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -287,11 +300,13 @@
       <div class="field-group">
         <label>date on the notice</label>
         <input type="date" id="s2_noticeDate" />
+        <span class="error-msg" id="s2_noticeDateError">Please enter the date on your notice.</span>
       </div>
 
       <div class="field-group">
         <label>date the increase takes effect</label>
         <input type="date" id="s2_effectiveDate" />
+        <span class="error-msg" id="s2_effectiveDateError">Please enter the date your increase takes effect.</span>
       </div>
 
       <div id="deadlineWarning" class="warn-box" style="display:none;">
@@ -317,6 +332,7 @@
             <div><div class="radio-label">I'm not sure</div></div>
           </label>
         </div>
+        <span class="error-msg" id="s2_officialFormError">Please select an option.</span>
       </div>
 
       <div class="field-group">
@@ -338,6 +354,7 @@
             <div><div class="radio-label">I'm not sure</div></div>
           </label>
         </div>
+        <span class="error-msg" id="s2_noticeError">Please select an option.</span>
       </div>
 
       <div class="btn-row">
@@ -345,7 +362,7 @@
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           back
         </button>
-        <button class="btn-next" onclick="goTo(3)">
+        <button class="btn-next" onclick="goToNext(3)">
           continue
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -371,6 +388,7 @@
             <option value="studio">studio</option>
             <option value="room">room in shared house</option>
           </select>
+          <span class="error-msg" id="s3_propTypeError">Please select a property type.</span>
         </div>
         <div class="field-group">
           <label>furnished?</label>
@@ -380,6 +398,7 @@
             <option value="unfurnished">unfurnished</option>
             <option value="part">part-furnished</option>
           </select>
+          <span class="error-msg" id="s3_furnishedError">Please select an option.</span>
         </div>
       </div>
 
@@ -419,7 +438,7 @@
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           back
         </button>
-        <button class="btn-next" onclick="goTo(4)">
+        <button class="btn-next" onclick="goToNext(4)">
           continue
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -448,7 +467,7 @@
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           back
         </button>
-        <button class="btn-next" onclick="goTo(5)">
+        <button class="btn-next" onclick="goToNext(5)">
           build my pack
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
@@ -558,6 +577,12 @@
         </div>
         <div class="footer-tagline">your tenant rights simplified</div>
       </div>
+      <ul class="footer-links">
+        <li><a href="index.html#how-it-works">how it works</a></li>
+        <li><a href="index.html#your-rights">your rights</a></li>
+        <li><a href="rentchecker.html">rent checker</a></li>
+        <li><a href="privacy.html">privacy policy</a></li>
+      </ul>
       <span class="footer-copy">© 2026 smart renter</span>
     </div>
     <div class="footer-disclaimer">
@@ -601,6 +626,84 @@
       return 1;
     }
 
+    // ── VALIDATION ─────────────────────────────────────────────────────────────
+    function setFieldError(fieldId, errorId, hasError) {
+      const field = document.getElementById(fieldId);
+      const error = document.getElementById(errorId);
+      if (field) field.classList.toggle('error', hasError);
+      if (error) error.style.display = hasError ? 'block' : 'none';
+      return hasError;
+    }
+
+    function validateStage1() {
+      let valid = true;
+      const postcode = document.getElementById('s1_postcode').value.trim();
+      const bedrooms = document.getElementById('s1_bedrooms').value;
+      const currentRent = parseFloat(document.getElementById('s1_currentRent').value);
+      const newRent = parseFloat(document.getElementById('s1_newRent').value);
+      const landlordName = document.getElementById('s1_landlordName').value.trim();
+      const tenantName = document.getElementById('s1_tenantName').value.trim();
+
+      if (setFieldError('s1_postcode', 's1_postcodeError', !postcode)) valid = false;
+      if (setFieldError('s1_bedrooms', 's1_bedroomsError', !bedrooms)) valid = false;
+      if (setFieldError('s1_currentRent', 's1_currentRentError', !currentRent || currentRent <= 0)) valid = false;
+      if (setFieldError('s1_newRent', 's1_newRentError', !newRent || newRent <= 0)) valid = false;
+      if (setFieldError('s1_landlordName', 's1_landlordNameError', !landlordName)) valid = false;
+      if (setFieldError('s1_tenantName', 's1_tenantNameError', !tenantName)) valid = false;
+
+      return valid;
+    }
+
+    function validateStage2() {
+      let valid = true;
+      const noticeDate = document.getElementById('s2_noticeDate').value;
+      const effectiveDate = document.getElementById('s2_effectiveDate').value;
+
+      if (setFieldError('s2_noticeDate', 's2_noticeDateError', !noticeDate)) valid = false;
+      if (setFieldError('s2_effectiveDate', 's2_effectiveDateError', !effectiveDate)) valid = false;
+
+      const officialFormError = document.getElementById('s2_officialFormError');
+      if (!data.s2_officialForm) {
+        officialFormError.style.display = 'block';
+        valid = false;
+      } else {
+        officialFormError.style.display = 'none';
+      }
+
+      const noticeError = document.getElementById('s2_noticeError');
+      if (!data.s2_notice) {
+        noticeError.style.display = 'block';
+        valid = false;
+      } else {
+        noticeError.style.display = 'none';
+      }
+
+      return valid;
+    }
+
+    function validateStage3() {
+      let valid = true;
+      const propType = document.getElementById('s3_propType').value;
+      const furnished = document.getElementById('s3_furnished').value;
+
+      if (setFieldError('s3_propType', 's3_propTypeError', !propType)) valid = false;
+      if (setFieldError('s3_furnished', 's3_furnishedError', !furnished)) valid = false;
+
+      return valid;
+    }
+
+    // goToNext validates the CURRENT stage before advancing to `target`
+    function goToNext(target) {
+      const current = currentStage();
+      let valid = true;
+      if (current === 1) valid = validateStage1();
+      else if (current === 2) valid = validateStage2();
+      else if (current === 3) valid = validateStage3();
+
+      if (!valid) return;
+      goTo(target);
+    }
+
     // ── RADIO CARDS ────────────────────────────────────────────────────────────
     function selectRadio(card, name, value) {
       document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
@@ -609,6 +712,10 @@
       card.classList.add('selected');
       card.querySelector('input[type="radio"]').checked = true;
       data[name] = value;
+
+      // Clear any error message for this radio group now a choice has been made
+      const errorEl = document.getElementById(`${name}Error`);
+      if (errorEl) errorEl.style.display = 'none';
     }
 
     // ── COMPARABLES ────────────────────────────────────────────────────────────
@@ -716,6 +823,25 @@
       this.value = this.value.toUpperCase();
     });
 
+    // ── PRE-FILL FROM RENT CHECKER ─────────────────────────────────────────────
+    // If the person arrives here from rentchecker.html, carry their answers across
+    // so they don't have to type everything twice.
+    (function prefillFromParams() {
+      const params = new URLSearchParams(window.location.search);
+
+      const postcode = params.get('postcode');
+      if (postcode) document.getElementById('s1_postcode').value = postcode.toUpperCase();
+
+      const bedrooms = params.get('bedrooms');
+      if (bedrooms) document.getElementById('s1_bedrooms').value = bedrooms;
+
+      const currentRent = params.get('currentRent');
+      if (currentRent) document.getElementById('s1_currentRent').value = currentRent;
+
+      const newRent = params.get('newRent');
+      if (newRent) document.getElementById('s1_newRent').value = newRent;
+    })();
+
     // ── BUILD PREVIEW ─────────────────────────────────────────────────────────
     function buildPreview() {
       collectData(4);
@@ -723,7 +849,6 @@
       const increase = data.currentRent > 0
         ? (((data.newRent - data.currentRent) / data.currentRent) * 100).toFixed(1)
         : 0;
-      const poundIncrease = (data.newRent - data.currentRent).toFixed(0);
 
       // Verdict
       const verdict = document.getElementById('previewVerdict');
@@ -762,7 +887,7 @@
         <p>${today}</p>
         <p>Dear ${data.landlordName || 'Landlord'},</p>
         <p>I am writing regarding the Section 13 notice dated ${data.noticeDate ? new Date(data.noticeDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '[notice date]'}, proposing an increase in my monthly rent from £${data.currentRent.toLocaleString()} to £${data.newRent.toLocaleString()} — a rise of ${increase}% — effective ${effectiveDateFormatted}.</p>
-        <p>Having researched comparable rental properties in the local area, I believe the proposed new rent of £${data.newRent.toLocaleString()} per month is above the current open market rate for a property of this type...</p>
+        <p>Having researched comparable rental properties in the local area, I believe the proposed new rent of £${data.newRent.toLocaleString()} per month is above the current open market rate for a property of this type and in this location.</p>
       `;
 
       document.getElementById('landlordNamePreview').textContent = data.landlordName || 'your landlord';
