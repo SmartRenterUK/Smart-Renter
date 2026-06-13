@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>tribunal challenge pack — smart renter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;0,800;1,700&family=Barlow+Condensed:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://app.lemonsqueezy.com/js/lemon.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RFK1X6N0TM"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-RFK1X6N0TM');
+  </script>
+
+  <style>
+    :root {
+      --green:       #4A7C2F;
+      --green-light: #EAF0E4;
+      --green-dark:  #2F5020;
+      --linen:       #E8E4DC;
+      --linen-dark:  #DDD8CE;
+      --white:       #FFFFFF;
+      --ink:         #1A1A1A;
+      --ink-mid:     #4A4A4A;
+      --ink-soft:    #888880;
+      --border:      #D4CFC6;
+      --red:         #C0392B;
+      --red-light:   #FDECEA;
+      --amber:       #D97706;
+      --amber-light: #FEF3C7;
+      --radius:      6px;
+      --radius-lg:   12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--linen); color: var(--ink); line-height: 1.6; overflow-x: hidden; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    /* LOGO */
+    .logo-wrap { display: flex; align-items: center; gap: 2px; }
+    .logo-text { font-family: 'Barlow', sans-serif; font-weight: 800; font-size: 30px; color: var(--ink); letter-spacing: -0.5px; text-transform: lowercase; line-height: 1; }
+    .logo-dot { width: 15px; height: 15px; background: var(--green); border-radius: 50%; flex-shrink: 0; margin-left: 3px; margin-bottom: 14px; }
+    .logo-slogan { font-size: 11px; font-weight: 400; color: var(--ink-soft); text-transform: lowercase; margin-top: 3px; letter-spacing: 0.02em; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(232,228,220,0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); padding: 0 2.5rem; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--ink-mid); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--green); }
+
+    /* MAIN LAYOUT */
+    .main { max-width: 680px; margin: 0 auto; padding: 100px 2.5rem 6rem; }
+
+    /* PROGRESS */
+    .progress-wrap { margin-bottom: 2.5rem; }
+    .progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .progress-step { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green); }
+    .progress-count { font-size: 11px; color: var(--ink-soft); font-weight: 400; }
+    .progress-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+
+    /* STAGE */
+    .stage { display: none; animation: fadeUp 0.35s ease both; }
+    .stage.active { display: block; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    .stage-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 0.5rem; }
+    .stage-title { font-family: 'Barlow', sans-serif; font-size: clamp(26px, 4vw, 38px); font-weight: 800; color: var(--ink); letter-spacing: -0.5px; text-transform: lowercase; line-height: 1.1; margin-bottom: 0.6rem; }
+    .stage-title em { font-style: italic; color: var(--green); }
+    .stage-sub { font-size: 15px; color: var(--ink-mid); line-height: 1.7; font-weight: 300; margin-bottom: 2rem; }
+
+    /* FORM ELEMENTS */
+    .field-group { margin-bottom: 1.25rem; }
+    .field-group label { display: block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-mid); margin-bottom: 6px; }
+    .field-hint { font-size: 11px; font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-soft); margin-left: 6px; }
+
+    input[type="text"], input[type="number"], input[type="date"], select, textarea {
+      width: 100%; height: 48px; padding: 0 16px;
+      border: 1.5px solid var(--border); border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--ink);
+      background: var(--white); outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--green); }
+    input::placeholder, textarea::placeholder { color: var(--ink-soft); }
+    textarea { height: auto; min-height: 100px; padding: 12px 16px; resize: vertical; }
+
+    .pound-wrap { position: relative; }
+    .pound-wrap::before { content: '£'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-soft); font-size: 15px; z-index: 1; }
+    .pound-wrap input { padding-left: 28px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    /* RADIO CARDS */
+    .radio-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+    .radio-card { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 1.25rem; background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-lg); cursor: pointer; transition: all 0.15s; }
+    .radio-card:hover { border-color: var(--green); }
+    .radio-card.selected { border-color: var(--green); background: var(--green-light); }
+    .radio-card input[type="radio"] { display: none; }
+    .radio-dot { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 50%; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+    .radio-card.selected .radio-dot { border-color: var(--green); background: var(--green); }
+    .radio-card.selected .radio-dot::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; }
+    .radio-label { font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1.4; }
+    .radio-sub { font-size: 13px; color: var(--ink-soft); font-weight: 300; margin-top: 2px; }
+
+    /* COMPARABLES */
+    .comparable-item { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 0.75rem; position: relative; }
+    .comparable-item .remove-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--ink-soft); cursor: pointer; font-size: 18px; line-height: 1; padding: 0; }
+    .comparable-item .remove-btn:hover { color: var(--red); }
+    .comparable-number { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--green); margin-bottom: 0.75rem; }
+    .add-comparable-btn { width: 100%; height: 44px; background: transparent; border: 1.5px dashed var(--border); border-radius: var(--radius-lg); font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink-soft); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .add-comparable-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+
+    /* NAV BUTTONS */
+    .btn-row { display: flex; gap: 1rem; margin-top: 2rem; align-items: center; }
+    .btn-next { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: var(--linen); padding: 13px 28px; border-radius: 100px; font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 700; text-transform: lowercase; border: none; cursor: pointer; transition: all 0.2s; }
+    .btn-next:hover { background: var(--green); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(74,124,47,0.25); }
+    .btn-back { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--ink-mid); padding: 13px 0; border: none; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 400; cursor: pointer; transition: color 0.2s; }
+    .btn-back:hover { color: var(--ink); }
+    .btn-back svg { transform: rotate(180deg); }
+
+    /* INFO BOX */
+    .info-box { background: var(--green-light); border: 1px solid rgba(74,124,47,0.2); border-left: 3px solid var(--green); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 14px; color: var(--ink-mid); line-height: 1.7; font-weight: 300; }
+    .info-box strong { color: var(--green-dark); font-weight: 600; }
+    .warn-box { background: var(--amber-light); border: 1px solid rgba(217,119,6,0.2); border-left: 3px solid var(--amber); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 14px; color: var(--ink-mid); line-height: 1.7; font-weight: 300; }
+    .warn-box strong { color: var(--amber); font-weight: 600; }
+
+    /* PREVIEW PAGE */
+    .verdict-card { border-radius: var(--radius-lg); padding: 1.75rem 2rem; margin-bottom: 1.5rem; border: 1px solid; }
+    .verdict-card.above { background: var(--red-light); border-color: rgba(192,57,43,0.2); }
+    .verdict-card.below { background: var(--green-light); border-color: rgba(74,124,47,0.2); }
+    .verdict-card.inline { background: var(--amber-light); border-color: rgba(217,119,6,0.2); }
+    .verdict-icon { font-size: 24px; margin-bottom: 0.5rem; }
+    .verdict-title { font-family: 'Barlow', sans-serif; font-size: 20px; font-weight: 800; text-transform: lowercase; margin-bottom: 0.4rem; }
+    .verdict-card.above .verdict-title { color: var(--red); }
+    .verdict-card.below .verdict-title { color: var(--green-dark); }
+    .verdict-card.inline .verdict-title { color: var(--amber); }
+    .verdict-body { font-size: 14px; color: var(--ink-mid); line-height: 1.7; font-weight: 300; }
+
+    .letter-preview { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 1.5rem; position: relative; overflow: hidden; }
+    .letter-preview h3 { font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); margin-bottom: 1.25rem; }
+    .letter-body { font-size: 14px; color: var(--ink-mid); line-height: 1.8; font-weight: 300; }
+    .letter-body p { margin-bottom: 0.75rem; }
+    .letter-blur { position: absolute; bottom: 0; left: 0; right: 0; height: 140px; background: linear-gradient(transparent, var(--white)); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1.25rem; }
+    .letter-blur span { font-size: 13px; color: var(--ink-soft); font-style: italic; }
+
+    .pack-contents { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .pack-contents h3 { font-family: 'Barlow', sans-serif; font-size: 15px; font-weight: 700; text-transform: lowercase; color: var(--ink); margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--linen-dark); }
+    .pack-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--linen-dark); }
+    .pack-item:last-child { border-bottom: none; }
+    .pack-icon { font-size: 16px; flex-shrink: 0; }
+    .pack-item-label { font-size: 14px; color: var(--ink); font-weight: 400; }
+    .pack-item-sub { font-size: 12px; color: var(--ink-soft); font-weight: 300; }
+
+    .pay-card { background: var(--ink); border-radius: var(--radius-lg); padding: 2rem 2.5rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+    .pay-card-text h3 { font-family: 'Barlow', sans-serif; font-size: 22px; font-weight: 800; text-transform: lowercase; color: var(--white); margin-bottom: 0.3rem; }
+    .pay-card-text p { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 300; }
+    .pay-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--green); color: var(--white); padding: 14px 28px; border-radius: 100px; font-family: 'Barlow', sans-serif; font-size: 16px; font-weight: 700; text-transform: lowercase; border: none; cursor: pointer; white-space: nowrap; transition: all 0.2s; text-decoration: none; }
+    .pay-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
+
+    .disclaimer { font-size: 12px; color: var(--ink-soft); line-height: 1.7; padding: 1rem 1.25rem; background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); font-weight: 300; margin-top: 1.5rem; }
+
+    /* FOOTER */
+    footer { background: var(--ink); color: rgba(255,255,255,0.5); padding: 3rem 2.5rem; margin-top: 4rem; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+    .footer-logo .logo-text { color: var(--white); font-size: 18px; }
+    .footer-tagline { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 4px; font-weight: 300; }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+    .footer-disclaimer { max-width: 1100px; margin: 1.5rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 11px; color: rgba(255,255,255,0.2); line-height: 1.7; }
+
+    @media (max-width: 640px) {
+      nav { padding: 0 1.25rem; }
+      .main { padding: 88px 1.25rem 4rem; }
+      .two-col { grid-template-columns: 1fr; }
+      .pay-card { flex-direction: column; }
+      .btn-row { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html">
+      <div>
+        <div class="logo-wrap">
+          <span class="logo-text">smart renter</span>
+          <div class="logo-dot"></div>
+        </div>
+        <div class="logo-slogan">your tenant rights simplified</div>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="rentchecker.html">rent checker</a></li>
+      <li><a href="index.html#your-rights">your rights</a></li>
+    </ul>
+  </nav>
+
+  <div class="main">
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span class="progress-step" id="progressStep">your situation</span>
+        <span class="progress-count" id="progressCount">step 1 of 5</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:20%"></div>
+      </div>
+    </div>
+
+    <!-- ── STAGE 1: YOUR SITUATION ── -->
+    <div class="stage active" id="stage1">
+      <div class="stage-label">step 1</div>
+      <h1 class="stage-title">tell us about your <em>rent increase</em></h1>
+      <p class="stage-sub">We'll use these details to personalise your entire pack — including your landlord letter and tribunal application guide.</p>
+
+      <div class="two-col">
+        <div class="field-group">
+          <label>postcode</label>
+          <input type="text" id="s1_postcode" placeholder="e.g. SW1A 1AA" maxlength="8" />
+        </div>
+        <div class="field-group">
+          <label>bedrooms</label>
+          <select id="s1_bedrooms">
+            <option value="">select…</option>
+            <option value="room">room only</option>
+            <option value="studio">studio</option>
+            <option value="1">1 bedroom</option>
+            <option value="2">2 bedrooms</option>
+            <option value="3">3 bedrooms</option>
+            <option value="4">4+ bedrooms</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="field-group">
+          <label>current rent <span class="field-hint">per month</span></label>
+          <div class="pound-wrap"><input type="number" id="s1_currentRent" placeholder="1200" min="1" /></div>
+        </div>
+        <div class="field-group">
+          <label>proposed new rent <span class="field-hint">per month</span></label>
+          <div class="pound-wrap"><input type="number" id="s1_newRent" placeholder="1350" min="1" /></div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>your landlord's name <span class="field-hint">for your letter</span></label>
+        <input type="text" id="s1_landlordName" placeholder="e.g. John Smith or Acme Properties Ltd" />
+      </div>
+
+      <div class="field-group">
+        <label>your name</label>
+        <input type="text" id="s1_tenantName" placeholder="your full name" />
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-next" onclick="goTo(2)">
+          continue
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STAGE 2: YOUR NOTICE ── -->
+    <div class="stage" id="stage2">
+      <div class="stage-label">step 2</div>
+      <h1 class="stage-title">about your <em>section 13 notice</em></h1>
+      <p class="stage-sub">The notice your landlord sent you is the starting point for any challenge. Let's check it's valid.</p>
+
+      <div class="info-box">
+        <strong>What is a Section 13 notice?</strong> It's the official form your landlord must use to propose a rent increase. It should be headed "Section 13 Notice" or reference "Form 4A." If your landlord just sent a letter or email saying the rent is going up, that may not be a valid notice.
+      </div>
+
+      <div class="field-group">
+        <label>date on the notice</label>
+        <input type="date" id="s2_noticeDate" />
+      </div>
+
+      <div class="field-group">
+        <label>date the increase takes effect</label>
+        <input type="date" id="s2_effectiveDate" />
+      </div>
+
+      <div id="deadlineWarning" class="warn-box" style="display:none;">
+        <strong>⚠️ Your deadline is approaching.</strong> You need to submit your tribunal application before the effective date above. Don't wait — submit first and gather evidence afterwards.
+      </div>
+
+      <div class="field-group" style="margin-top:1.5rem;">
+        <label>did your landlord use the official form?</label>
+        <div class="radio-grid" style="margin-top:0.5rem;">
+          <label class="radio-card" onclick="selectRadio(this, 's2_officialForm', 'yes')">
+            <input type="radio" name="s2_officialForm" value="yes" />
+            <div class="radio-dot"></div>
+            <div><div class="radio-label">Yes — it says "Section 13 Notice" or "Form 4A"</div></div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this, 's2_officialForm', 'no')">
+            <input type="radio" name="s2_officialForm" value="no" />
+            <div class="radio-dot"></div>
+            <div><div class="radio-label">No — it was just a letter or email</div><div class="radio-sub">This may mean the notice is invalid</div></div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this, 's2_officialForm', 'unsure')">
+            <input type="radio" name="s2_officialForm" value="unsure" />
+            <div class="radio-dot"></div>
+            <div><div class="radio-label">I'm not sure</div></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>how much notice were you given?</label>
+        <div class="radio-grid" style="margin-top:0.5rem;">
+          <label class="radio-card" onclick="selectRadio(this, 's2_notice', 'over2')">
+            <input type="radio" name="s2_notice" value="over2" />
+            <div class="radio-dot"></div>
+            <div><div class="radio-label">More than 2 months</div></div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this, 's2_notice', 'under2')">
+            <input type="radio" name="s2_notice" value="under2" />
+            <div class="radio-dot"></div>
+            <div><div class="radio-label">Less than 2 months</div><div class="radio-sub">From 1 May 2026, landlords must give at least 2 months' notice — this may be invalid</div></div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this, 's2_notice', 'unsure')">
+            <input type="radio" name="s2_notice" value="unsure" />
+            <div class="radio-dot"></div>
+            <div><div class="radio-label">I'm not sure</div></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goTo(1)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          back
+        </button>
+        <button class="btn-next" onclick="goTo(3)">
+          continue
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STAGE 3: YOUR PROPERTY ── -->
+    <div class="stage" id="stage3">
+      <div class="stage-label">step 3</div>
+      <h1 class="stage-title">about your <em>property</em></h1>
+      <p class="stage-sub">The tribunal sets rent based on the open market value of your specific property. These details help build your case.</p>
+
+      <div class="two-col">
+        <div class="field-group">
+          <label>property type</label>
+          <select id="s3_propType">
+            <option value="">select…</option>
+            <option value="flat">flat / apartment</option>
+            <option value="house">house</option>
+            <option value="terraced">terraced house</option>
+            <option value="semi">semi-detached house</option>
+            <option value="detached">detached house</option>
+            <option value="studio">studio</option>
+            <option value="room">room in shared house</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>furnished?</label>
+          <select id="s3_furnished">
+            <option value="">select…</option>
+            <option value="furnished">furnished</option>
+            <option value="unfurnished">unfurnished</option>
+            <option value="part">part-furnished</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>outside space</label>
+        <div class="radio-grid" style="margin-top:0.5rem;">
+          <label class="radio-card" onclick="selectRadio(this, 's3_outdoor', 'garden')">
+            <input type="radio" name="s3_outdoor" value="garden" />
+            <div class="radio-dot"></div>
+            <div><div class="radio-label">Private garden</div></div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this, 's3_outdoor', 'terrace')">
+            <input type="radio" name="s3_outdoor" value="terrace" />
+            <div class="radio-dot"></div>
+            <div><div class="radio-label">Balcony or terrace</div></div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this, 's3_outdoor', 'shared')">
+            <input type="radio" name="s3_outdoor" value="shared" />
+            <div class="radio-dot"></div>
+            <div><div class="radio-label">Shared outdoor space</div></div>
+          </label>
+          <label class="radio-card" onclick="selectRadio(this, 's3_outdoor', 'none')">
+            <input type="radio" name="s3_outdoor" value="none" />
+            <div class="radio-dot"></div>
+            <div><div class="radio-label">No outdoor space</div></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>maintenance issues? <span class="field-hint">optional</span></label>
+        <textarea id="s3_maintenance" placeholder="Describe any outstanding repairs or maintenance issues — damp, mould, broken fixtures, etc. These can support a lower market rent determination at tribunal."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goTo(2)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          back
+        </button>
+        <button class="btn-next" onclick="goTo(4)">
+          continue
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STAGE 4: COMPARABLES ── -->
+    <div class="stage" id="stage4">
+      <div class="stage-label">step 4</div>
+      <h1 class="stage-title">your <em>comparable properties</em></h1>
+      <p class="stage-sub">This is the most important evidence you can provide. Find similar properties in your area on Rightmove or Zoopla and add them below.</p>
+
+      <div class="info-box">
+        <strong>What to look for:</strong> Properties with the same number of bedrooms, in the same street or immediate area, listed or let within the last 6 months. Aim for at least 3. Rightmove and Zoopla screenshots are accepted by the tribunal.
+      </div>
+
+      <div id="comparablesList"></div>
+
+      <button class="add-comparable-btn" onclick="addComparable()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        add a comparable property
+      </button>
+
+      <div class="btn-row" style="margin-top:1.5rem;">
+        <button class="btn-back" onclick="goTo(3)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          back
+        </button>
+        <button class="btn-next" onclick="goTo(5)">
+          build my pack
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STAGE 5: PREVIEW + PAY ── -->
+    <div class="stage" id="stage5">
+      <div class="stage-label">your pack is ready</div>
+      <h1 class="stage-title">here's what we've <em>built for you</em></h1>
+      <p class="stage-sub">Based on your answers, here's your personalised tribunal challenge pack. Preview your landlord letter below, then unlock the full pack for £19.99.</p>
+
+      <!-- VERDICT -->
+      <div class="verdict-card" id="previewVerdict"></div>
+
+      <!-- LETTER PREVIEW -->
+      <div class="letter-preview">
+        <h3>📄 your landlord letter — preview</h3>
+        <div class="letter-body" id="letterPreview"></div>
+        <div class="letter-blur">
+          <span>full letter included in your pack</span>
+        </div>
+      </div>
+
+      <!-- PACK CONTENTS -->
+      <div class="pack-contents">
+        <h3>what's included in your pack</h3>
+        <div class="pack-item">
+          <span class="pack-icon">📋</span>
+          <div>
+            <div class="pack-item-label">Step-by-step tribunal guide</div>
+            <div class="pack-item-sub">Personalised with your dates, rents and deadline</div>
+          </div>
+        </div>
+        <div class="pack-item">
+          <span class="pack-icon">✉️</span>
+          <div>
+            <div class="pack-item-label">Landlord challenge letter</div>
+            <div class="pack-item-sub">Ready to send — addressed to <span id="landlordNamePreview">your landlord</span></div>
+          </div>
+        </div>
+        <div class="pack-item">
+          <span class="pack-icon">📝</span>
+          <div>
+            <div class="pack-item-label">Form Rents 1 walkthrough</div>
+            <div class="pack-item-sub">Field-by-field guide pre-filled with your details</div>
+          </div>
+        </div>
+        <div class="pack-item">
+          <span class="pack-icon">✅</span>
+          <div>
+            <div class="pack-item-label">Evidence checklist</div>
+            <div class="pack-item-sub">Personalised to your situation</div>
+          </div>
+        </div>
+        <div class="pack-item">
+          <span class="pack-icon">🏘️</span>
+          <div>
+            <div class="pack-item-label">Comparables worksheet</div>
+            <div class="pack-item-sub">Formatted summary of your <span id="compCountPreview">0</span> comparable properties</div>
+          </div>
+        </div>
+        <div class="pack-item">
+          <span class="pack-icon">❓</span>
+          <div>
+            <div class="pack-item-label">Frequently asked questions</div>
+            <div class="pack-item-sub">Common questions about the tribunal process</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAY -->
+      <div class="pay-card">
+        <div class="pay-card-text">
+          <h3>get your full pack</h3>
+          <p>One-time payment · instant download · no subscription</p>
+        </div>
+        <a href="https://smartrenter.lemonsqueezy.com/checkout/buy/398062b4-33b9-425b-bc87-e945ef3cd7d0"
+           class="pay-btn lemonsqueezy-button"
+           id="payBtn">
+          £19.99 — get my pack
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+      <div class="disclaimer">
+        Smart Renter provides general information to help tenants understand their rights. This pack is not legal advice and should not be relied upon as such. Smart Renter is not a law firm and no lawyer-client relationship is created by purchasing this pack.
+      </div>
+
+      <div class="btn-row" style="margin-top:1rem;">
+        <button class="btn-back" onclick="goTo(4)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          back
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <div class="logo-wrap">
+          <span class="logo-text">smart renter</span>
+          <div class="logo-dot"></div>
+        </div>
+        <div class="footer-tagline">your tenant rights simplified</div>
+      </div>
+      <span class="footer-copy">© 2026 smart renter</span>
+    </div>
+    <div class="footer-disclaimer">
+      Smart Renter provides general information to help tenants understand their rights. This is not legal advice and should not be relied upon as such. Smart Renter is not a law firm and no lawyer-client relationship is created by using this site.
+    </div>
+  </footer>
+
+  <script>
+    // ── STATE ──────────────────────────────────────────────────────────────────
+    let comparableCount = 0;
+    const data = {};
+
+    const steps = [
+      { label: 'your situation', count: 'step 1 of 5', progress: '20%' },
+      { label: 'your notice',    count: 'step 2 of 5', progress: '40%' },
+      { label: 'your property',  count: 'step 3 of 5', progress: '60%' },
+      { label: 'comparables',    count: 'step 4 of 5', progress: '80%' },
+      { label: 'your pack',      count: 'step 5 of 5', progress: '100%' },
+    ];
+
+    // ── NAVIGATION ─────────────────────────────────────────────────────────────
+    function goTo(n) {
+      collectData(currentStage());
+      if (n === 5) buildPreview();
+
+      document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+      document.getElementById(`stage${n}`).classList.add('active');
+
+      const s = steps[n - 1];
+      document.getElementById('progressStep').textContent = s.label;
+      document.getElementById('progressCount').textContent = s.count;
+      document.getElementById('progressFill').style.width = s.progress;
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function currentStage() {
+      for (let i = 1; i <= 5; i++) {
+        if (document.getElementById(`stage${i}`).classList.contains('active')) return i;
+      }
+      return 1;
+    }
+
+    // ── RADIO CARDS ────────────────────────────────────────────────────────────
+    function selectRadio(card, name, value) {
+      document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+        r.closest('.radio-card').classList.remove('selected');
+      });
+      card.classList.add('selected');
+      card.querySelector('input[type="radio"]').checked = true;
+      data[name] = value;
+    }
+
+    // ── COMPARABLES ────────────────────────────────────────────────────────────
+    function addComparable() {
+      comparableCount++;
+      const n = comparableCount;
+      const list = document.getElementById('comparablesList');
+      const div = document.createElement('div');
+      div.className = 'comparable-item';
+      div.id = `comp${n}`;
+      div.innerHTML = `
+        <button class="remove-btn" onclick="removeComparable(${n})">×</button>
+        <div class="comparable-number">comparable ${n}</div>
+        <div class="two-col">
+          <div class="field-group">
+            <label>address or description</label>
+            <input type="text" id="comp${n}_addr" placeholder="e.g. 12 High Street, same road" />
+          </div>
+          <div class="field-group">
+            <label>monthly rent</label>
+            <div class="pound-wrap"><input type="number" id="comp${n}_rent" placeholder="1250" /></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="field-group">
+            <label>bedrooms</label>
+            <select id="comp${n}_beds">
+              <option value="">select…</option>
+              <option value="studio">studio</option>
+              <option value="1">1 bed</option>
+              <option value="2">2 bed</option>
+              <option value="3">3 bed</option>
+              <option value="4">4+ bed</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label>source</label>
+            <select id="comp${n}_source">
+              <option value="">select…</option>
+              <option value="Rightmove">Rightmove</option>
+              <option value="Zoopla">Zoopla</option>
+              <option value="OpenRent">OpenRent</option>
+              <option value="letting agent">Letting agent</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+      `;
+      list.appendChild(div);
+    }
+
+    function removeComparable(n) {
+      const el = document.getElementById(`comp${n}`);
+      if (el) el.remove();
+    }
+
+    function getComparables() {
+      const comps = [];
+      document.querySelectorAll('.comparable-item').forEach(item => {
+        const n = item.id.replace('comp', '');
+        const addr = document.getElementById(`comp${n}_addr`)?.value;
+        const rent = document.getElementById(`comp${n}_rent`)?.value;
+        const beds = document.getElementById(`comp${n}_beds`)?.value;
+        const source = document.getElementById(`comp${n}_source`)?.value;
+        if (addr || rent) comps.push({ addr, rent, beds, source });
+      });
+      return comps;
+    }
+
+    // ── COLLECT DATA ───────────────────────────────────────────────────────────
+    function collectData(stage) {
+      if (stage === 1) {
+        data.postcode = document.getElementById('s1_postcode').value.toUpperCase().trim();
+        data.bedrooms = document.getElementById('s1_bedrooms').value;
+        data.currentRent = parseFloat(document.getElementById('s1_currentRent').value) || 0;
+        data.newRent = parseFloat(document.getElementById('s1_newRent').value) || 0;
+        data.landlordName = document.getElementById('s1_landlordName').value.trim();
+        data.tenantName = document.getElementById('s1_tenantName').value.trim();
+      }
+      if (stage === 2) {
+        data.noticeDate = document.getElementById('s2_noticeDate').value;
+        data.effectiveDate = document.getElementById('s2_effectiveDate').value;
+      }
+      if (stage === 3) {
+        data.propType = document.getElementById('s3_propType').value;
+        data.furnished = document.getElementById('s3_furnished').value;
+        data.maintenance = document.getElementById('s3_maintenance').value.trim();
+      }
+      if (stage === 4) {
+        data.comparables = getComparables();
+      }
+    }
+
+    // ── DEADLINE WARNING ───────────────────────────────────────────────────────
+    document.getElementById('s2_effectiveDate').addEventListener('change', function() {
+      const effectiveDate = new Date(this.value);
+      const today = new Date();
+      const daysLeft = Math.ceil((effectiveDate - today) / (1000 * 60 * 60 * 24));
+      const warning = document.getElementById('deadlineWarning');
+      warning.style.display = (daysLeft <= 30 && daysLeft > 0) ? 'block' : 'none';
+    });
+
+    // ── AUTO-UPPERCASE POSTCODE ────────────────────────────────────────────────
+    document.getElementById('s1_postcode').addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
+    });
+
+    // ── BUILD PREVIEW ─────────────────────────────────────────────────────────
+    function buildPreview() {
+      collectData(4);
+
+      const increase = data.currentRent > 0
+        ? (((data.newRent - data.currentRent) / data.currentRent) * 100).toFixed(1)
+        : 0;
+      const poundIncrease = (data.newRent - data.currentRent).toFixed(0);
+
+      // Verdict
+      const verdict = document.getElementById('previewVerdict');
+      const compCount = (data.comparables || []).length;
+
+      if (compCount >= 3) {
+        verdict.className = 'verdict-card below';
+        verdict.innerHTML = `
+          <div class="verdict-icon">✅</div>
+          <div class="verdict-title">your pack is ready — you have strong evidence</div>
+          <div class="verdict-body">You've added ${compCount} comparable properties. Combined with your personalised letter and form walkthrough, you're well placed to make a challenge.</div>
+        `;
+      } else if (compCount > 0) {
+        verdict.className = 'verdict-card inline';
+        verdict.innerHTML = `
+          <div class="verdict-icon">📊</div>
+          <div class="verdict-title">your pack is ready — consider adding more comparables</div>
+          <div class="verdict-body">You've added ${compCount} comparable ${compCount === 1 ? 'property' : 'properties'}. The tribunal responds best to 3 or more — you can always add more before submitting your application.</div>
+        `;
+      } else {
+        verdict.className = 'verdict-card inline';
+        verdict.innerHTML = `
+          <div class="verdict-icon">📋</div>
+          <div class="verdict-title">your pack is ready</div>
+          <div class="verdict-body">Your personalised pack is built and ready. Your guide explains exactly how to find and present comparable evidence — the most important part of your application.</div>
+        `;
+      }
+
+      // Letter preview
+      const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      const effectiveDateFormatted = data.effectiveDate
+        ? new Date(data.effectiveDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+        : '[effective date]';
+
+      document.getElementById('letterPreview').innerHTML = `
+        <p>${today}</p>
+        <p>Dear ${data.landlordName || 'Landlord'},</p>
+        <p>I am writing regarding the Section 13 notice dated ${data.noticeDate ? new Date(data.noticeDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '[notice date]'}, proposing an increase in my monthly rent from £${data.currentRent.toLocaleString()} to £${data.newRent.toLocaleString()} — a rise of ${increase}% — effective ${effectiveDateFormatted}.</p>
+        <p>Having researched comparable rental properties in the local area, I believe the proposed new rent of £${data.newRent.toLocaleString()} per month is above the current open market rate for a property of this type...</p>
+      `;
+
+      document.getElementById('landlordNamePreview').textContent = data.landlordName || 'your landlord';
+      document.getElementById('compCountPreview').textContent = compCount;
+    }
+
+    // ── LEMON SQUEEZY PAYMENT SUCCESS ─────────────────────────────────────────
+    window.addEventListener('load', () => {
+      if (window.createLemonSqueezy) {
+        window.createLemonSqueezy();
+        window.LemonSqueezy.Setup({
+          eventHandler: (event) => {
+            if (event.event === 'Checkout.Success') {
+              generateAndDownloadPack();
+            }
+          }
+        });
+      }
+    });
+
+    function generateAndDownloadPack() {
+      const payCard = document.querySelector('.pay-card');
+      payCard.innerHTML = `
+        <div style="text-align:center; width:100%; padding: 1rem 0;">
+          <div style="font-size:32px; margin-bottom:0.75rem;">✅</div>
+          <h3 style="font-family:'Barlow',sans-serif; font-size:22px; font-weight:800; text-transform:lowercase; color:var(--white); margin-bottom:0.5rem;">payment confirmed</h3>
+          <p style="font-size:14px; color:rgba(255,255,255,0.6); margin-bottom:1.25rem;">Preparing your pack — your download will start in a few seconds.</p>
+        </div>
+      `;
+      setTimeout(() => downloadPack(data), 800);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // DOCUMENT GENERATION
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    const BEDROOM_LABELS_FULL = {
+      room: 'a room', studio: 'a studio flat', '1': 'a 1-bedroom property',
+      '2': 'a 2-bedroom property', '3': 'a 3-bedroom property', '4': 'a 4+ bedroom property'
+    };
+
+    function fmtDate(dateStr, fallback) {
+      if (!dateStr) return fallback || '[date]';
+      return new Date(dateStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function fmtMoney(n) {
+      return `£${Number(n || 0).toLocaleString()}`;
+    }
+
+    // Shared PDF styling helpers
+    const PDF = {
+      margin: 20,
+      pageWidth: 210,
+      contentWidth: 170,
+      green: [74, 124, 47],
+      ink: [26, 26, 26],
+      inkMid: [74, 74, 74],
+      inkSoft: [136, 136, 128],
+
+      newDoc() {
+        const doc = new jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+        doc.setFont('helvetica');
+        return doc;
+      },
+
+      header(doc, title, subtitle) {
+        doc.setFillColor(74, 124, 47);
+        doc.rect(0, 0, 210, 8, 'F');
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.setTextColor(...this.ink);
+        doc.text('smart renter', this.margin, 22);
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        doc.setTextColor(...this.inkSoft);
+        doc.text('your tenant rights simplified', this.margin, 27);
+
+        doc.setDrawColor(212, 207, 198);
+        doc.line(this.margin, 32, 210 - this.margin, 32);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.setTextColor(...this.ink);
+        doc.text(title, this.margin, 44);
+
+        if (subtitle) {
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(10);
+          doc.setTextColor(...this.inkMid);
+          doc.text(subtitle, this.margin, 51);
+          return 60;
+        }
+        return 54;
+      },
+
+      footer(doc, pageNum) {
+        const h = doc.internal.pageSize.height;
+        doc.setDrawColor(212, 207, 198);
+        doc.line(this.margin, h - 18, 210 - this.margin, h - 18);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7);
+        doc.setTextColor(...this.inkSoft);
+        doc.text('Smart Renter provides general information, not legal advice. smartrenter.co.uk', this.margin, h - 12);
+        doc.text(`Page ${pageNum}`, 210 - this.margin, h - 12, { align: 'right' });
+      },
+
+      // Wraps text and returns new y position
+      para(doc, text, x, y, opts = {}) {
+        const size = opts.size || 10;
+        const color = opts.color || this.inkMid;
+        const lineHeight = opts.lineHeight || 5.2;
+        const width = opts.width || this.contentWidth;
+        const bold = opts.bold || false;
+
+        doc.setFont('helvetica', bold ? 'bold' : 'normal');
+        doc.setFontSize(size);
+        doc.setTextColor(...color);
+
+        const lines = doc.splitTextToSize(text, width);
+        lines.forEach(line => {
+          if (y > 270) {
+            this.footer(doc, doc.internal.getNumberOfPages());
+            doc.addPage();
+            y = 25;
+          }
+          doc.text(line, x, y);
+          y += lineHeight;
+        });
+        return y;
+      },
+
+      heading(doc, text, x, y) {
+        if (y > 260) {
+          this.footer(doc, doc.internal.getNumberOfPages());
+          doc.addPage();
+          y = 25;
+        }
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(13);
+        doc.setTextColor(...this.green);
+        doc.text(text, x, y);
+        return y + 8;
+      },
+
+      checkbox(doc, text, x, y) {
+        if (y > 265) {
+          this.footer(doc, doc.internal.getNumberOfPages());
+          doc.addPage();
+          y = 25;
+        }
+        doc.setDrawColor(...this.inkSoft);
+        doc.rect(x, y - 3.5, 4, 4);
+        const newY = this.para(doc, text, x + 7, y, { width: this.contentWidth - 7 });
+        return newY + 1;
+      },
+
+      spacer(y, amount = 4) {
+        return y + amount;
+      }
+    };
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 1. THE GUIDE
+    // ─────────────────────────────────────────────────────────────────────────
+    function generateGuidePDF(d) {
+      const doc = PDF.newDoc();
+      const x = PDF.margin;
+      let y = PDF.header(doc, 'your tribunal challenge guide', 'A step-by-step guide, personalised for your situation');
+
+      y = PDF.para(doc, `Prepared for: ${d.tenantName || '[your name]'}`, x, y, { size: 9, color: PDF.inkSoft });
+      y = PDF.para(doc, `Property: ${BEDROOM_LABELS_FULL[d.bedrooms] || 'your property'} at ${d.postcode || '[postcode]'}`, x, y, { size: 9, color: PDF.inkSoft });
+      y = PDF.spacer(y, 6);
+
+      y = PDF.para(doc, `The tribunal does not decide whether your percentage increase is fair. It sets the open market rent for your specific property — meaning, what would a new tenant pay for your home today? That's the question at the heart of this process.`, x, y, { size: 10 });
+      y = PDF.spacer(y, 4);
+
+      y = PDF.heading(doc, 'step 1 — check your notice is valid', x, y);
+      y = PDF.para(doc, `Your landlord must follow the correct process to increase your rent. A valid Section 13 notice must use the official form (Form 4, sometimes referred to as Form 4A), give at least 2 months' written notice, propose a start date on the first day of a new rent period, clearly show your current and proposed rent, and be served in writing.`, x, y);
+      y = PDF.spacer(y, 2);
+
+      const noticeOk = d.s2_officialForm === 'yes' ? 'Based on your answers, your notice appears to use the correct form.'
+        : d.s2_officialForm === 'no' ? 'Based on your answers, your notice may not be on the correct official form — this could mean it is invalid. Consider writing to your landlord to query this, or seek advice before proceeding.'
+        : 'You weren\'t sure whether the correct form was used — it\'s worth checking the notice carefully against the GOV.UK Form 4A template before proceeding.';
+      y = PDF.para(doc, noticeOk, x, y, { bold: true, color: PDF.ink });
+      y = PDF.spacer(y, 2);
+
+      if (d.s2_notice === 'under2') {
+        y = PDF.para(doc, `You indicated you were given less than 2 months' notice. From 1 May 2026, landlords must give at least 2 months — this may mean your notice is invalid.`, x, y, { bold: true, color: PDF.ink });
+        y = PDF.spacer(y, 2);
+      }
+
+      y = PDF.heading(doc, 'step 2 — your situation', x, y);
+      y = PDF.para(doc, `Current rent: ${fmtMoney(d.currentRent)} per month`, x, y);
+      y = PDF.para(doc, `Proposed rent: ${fmtMoney(d.newRent)} per month`, x, y);
+      const increase = d.currentRent > 0 ? (((d.newRent - d.currentRent) / d.currentRent) * 100).toFixed(1) : '0';
+      y = PDF.para(doc, `Proposed increase: ${increase}%`, x, y);
+      y = PDF.para(doc, `Notice date: ${fmtDate(d.noticeDate)}`, x, y);
+      y = PDF.para(doc, `Effective date: ${fmtDate(d.effectiveDate)}`, x, y, { bold: true, color: PDF.ink });
+      y = PDF.spacer(y, 2);
+      y = PDF.para(doc, `Important: you must submit your tribunal application before the effective date above. Once that date passes, the increase takes effect automatically and you lose the right to challenge it through this process.`, x, y, { bold: true });
+      y = PDF.spacer(y, 4);
+
+      y = PDF.heading(doc, 'step 3 — your evidence', x, y);
+      const comps = d.comparables || [];
+      if (comps.length > 0) {
+        y = PDF.para(doc, `You've identified ${comps.length} comparable propert${comps.length === 1 ? 'y' : 'ies'} — see your comparables worksheet for the full list. Aim for at least 3 to give the tribunal a clear picture of the local market.`, x, y);
+      } else {
+        y = PDF.para(doc, `You haven't added any comparable properties yet. This is the most important evidence for your case. Search Rightmove and Zoopla for properties similar to yours — same bedroom count, same area, listed within the last 3-6 months — and aim for at least 3.`, x, y);
+      }
+      y = PDF.spacer(y, 2);
+
+      if (d.maintenance) {
+        y = PDF.para(doc, `Property condition: you noted the following maintenance issues, which may support a lower market rent determination:`, x, y);
+        y = PDF.para(doc, `"${d.maintenance}"`, x, y, { color: PDF.ink });
+        y = PDF.para(doc, `Take dated photos of these issues and keep any written correspondence with your landlord about them.`, x, y);
+        y = PDF.spacer(y, 4);
+      }
+
+      y = PDF.heading(doc, 'step 4 — write to your landlord first', x, y);
+      y = PDF.para(doc, `Before applying to the tribunal, it's worth writing to your landlord explaining that you believe the proposed increase is above market rate. Many disputes are resolved at this stage. Your personalised letter is included in this pack — see "landlord-letter.pdf".`, x, y);
+      y = PDF.spacer(y, 4);
+
+      y = PDF.heading(doc, 'step 5 — complete form rents 1', x, y);
+      y = PDF.para(doc, `Form Rents 1 is the official tenant application to the First-tier Tribunal (Property Chamber). Apply online at apply-for-market-rent-determination.form.service.justice.gov.uk, or download the paper form from GOV.UK. See "rents1-walkthrough.pdf" in this pack for a field-by-field guide using your details.`, x, y);
+      y = PDF.spacer(y, 4);
+
+      y = PDF.heading(doc, 'step 6 — submit your application', x, y);
+      y = PDF.para(doc, `The fee is £47, paid after you submit (this locks in your deadline first). If you're on a low income, the Help with Fees scheme may reduce or waive this — check eligibility on GOV.UK. Send a copy of your application to your landlord at the same time, and keep copies of everything.`, x, y);
+      y = PDF.para(doc, `From the moment you submit, your current rent stays in place. The proposed new rent does not take effect while your application is pending.`, x, y, { bold: true, color: PDF.ink });
+      y = PDF.spacer(y, 4);
+
+      y = PDF.heading(doc, 'step 7 — what happens next', x, y);
+      y = PDF.para(doc, `The tribunal sends a copy of your application to your landlord, who has 28 days to respond (Form Rents 1A). You then have 14 days to reply if you wish (Form Rents 1B). Most cases are decided on the papers within 6-12 weeks. If a hearing is needed, it's informal — a panel around a table, no courtroom — and typically takes 6-9 months from application to decision.`, x, y);
+      y = PDF.spacer(y, 4);
+
+      y = PDF.heading(doc, 'step 8 — the outcome', x, y);
+      y = PDF.para(doc, `The tribunal can reduce the rent to what it considers the open market rate, or confirm your landlord's proposed figure. It cannot set a rent higher than your landlord proposed — this is the key protection under the Renters Rights Act. The new rent starts from the next rent period after the decision and is not backdated.`, x, y);
+
+      PDF.footer(doc, 1);
+      return doc;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 2. LANDLORD LETTER
+    // ─────────────────────────────────────────────────────────────────────────
+    function generateLetterPDF(d) {
+      const doc = PDF.newDoc();
+      const x = PDF.margin;
+      let y = PDF.header(doc, 'landlord challenge letter', 'Ready to send by post or email');
+
+      const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      const increase = d.currentRent > 0 ? (((d.newRent - d.currentRent) / d.currentRent) * 100).toFixed(1) : '0';
+
+      y = PDF.para(doc, today, x, y, { size: 10, color: PDF.ink });
+      y = PDF.spacer(y, 4);
+      y = PDF.para(doc, `Dear ${d.landlordName || '[Landlord name]'},`, x, y, { size: 10, color: PDF.ink });
+      y = PDF.spacer(y, 3);
+
+      y = PDF.para(doc, `Re: Proposed rent increase — ${d.postcode || '[property address]'}`, x, y, { size: 10, color: PDF.ink, bold: true });
+      y = PDF.spacer(y, 3);
+
+      y = PDF.para(doc, `I am writing regarding the Section 13 notice dated ${fmtDate(d.noticeDate)}, proposing an increase in my monthly rent from ${fmtMoney(d.currentRent)} to ${fmtMoney(d.newRent)} — a rise of ${increase}% — effective from ${fmtDate(d.effectiveDate)}.`, x, y, { size: 10, color: PDF.ink });
+      y = PDF.spacer(y, 3);
+
+      y = PDF.para(doc, `Having researched comparable rental properties in the local area, I believe the proposed new rent of ${fmtMoney(d.newRent)} per month is above the current open market rate for a property of this type and in this location.`, x, y, { size: 10, color: PDF.ink });
+      y = PDF.spacer(y, 3);
+
+      const comps = d.comparables || [];
+      if (comps.length > 0) {
+        y = PDF.para(doc, `For reference, the following comparable properties are currently available or have recently been let in the area:`, x, y, { size: 10, color: PDF.ink });
+        y = PDF.spacer(y, 1);
+        comps.forEach(c => {
+          if (c.addr || c.rent) {
+            const line = `• ${c.addr || 'Comparable property'} — ${fmtMoney(c.rent)}/month${c.beds ? ` (${c.beds} bed)` : ''}${c.source ? ` [${c.source}]` : ''}`;
+            y = PDF.para(doc, line, x + 2, y, { size: 9.5, color: PDF.ink, width: PDF.contentWidth - 2 });
+          }
+        });
+        y = PDF.spacer(y, 2);
+      }
+
+      if (d.maintenance) {
+        y = PDF.para(doc, `I would also note that the property currently has the following outstanding issue(s), which I believe should be reflected in any assessment of its market value: ${d.maintenance}`, x, y, { size: 10, color: PDF.ink });
+        y = PDF.spacer(y, 3);
+      }
+
+      y = PDF.para(doc, `Given the above, I would ask that you reconsider the proposed increase. I would welcome the opportunity to discuss a revised figure that more accurately reflects the current market rate for this property.`, x, y, { size: 10, color: PDF.ink });
+      y = PDF.spacer(y, 3);
+
+      y = PDF.para(doc, `If we are unable to reach an agreement, I should note that I am entitled to refer this matter to the First-tier Tribunal (Property Chamber) for a determination of the open market rent, in accordance with my rights under the Renters Rights Act.`, x, y, { size: 10, color: PDF.ink });
+      y = PDF.spacer(y, 3);
+
+      y = PDF.para(doc, `I look forward to hearing from you.`, x, y, { size: 10, color: PDF.ink });
+      y = PDF.spacer(y, 3);
+
+      y = PDF.para(doc, `Yours sincerely,`, x, y, { size: 10, color: PDF.ink });
+      y = PDF.spacer(y, 8);
+      y = PDF.para(doc, d.tenantName || '[Your name]', x, y, { size: 10, color: PDF.ink, bold: true });
+      y = PDF.para(doc, d.postcode || '[Your address]', x, y, { size: 10, color: PDF.ink });
+
+      PDF.footer(doc, 1);
+      return doc;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 3. FORM RENTS 1 WALKTHROUGH
+    // ─────────────────────────────────────────────────────────────────────────
+    function generateFormWalkthroughPDF(d) {
+      const doc = PDF.newDoc();
+      const x = PDF.margin;
+      let y = PDF.header(doc, 'form rents 1 — your walkthrough', 'Field-by-field guide using your details');
+
+      y = PDF.para(doc, `This walkthrough mirrors the structure of Form Rents 1, the official tenant application to the First-tier Tribunal (Property Chamber). Apply online at apply-for-market-rent-determination.form.service.justice.gov.uk, or use the paper form from GOV.UK. Use the details below to help you complete each section.`, x, y);
+      y = PDF.spacer(y, 4);
+
+      const sections = [
+        { title: '1. your details', rows: [
+          ['Name', d.tenantName || '[your name]'],
+          ['Address', d.postcode || '[your address]'],
+        ]},
+        { title: '2. landlord details', rows: [
+          ['Landlord name', d.landlordName || '[landlord name]'],
+        ]},
+        { title: '3. tenancy details', rows: [
+          ['Current rent', `${fmtMoney(d.currentRent)} per month`],
+          ['Property type', d.propType || '[property type]'],
+          ['Furnished status', d.furnished || '[furnished status]'],
+          ['Bedrooms', BEDROOM_LABELS_FULL[d.bedrooms] || '[bedrooms]'],
+        ]},
+        { title: '4. the section 13 notice', rows: [
+          ['Notice date', fmtDate(d.noticeDate)],
+          ['Proposed new rent', `${fmtMoney(d.newRent)} per month`],
+          ['Effective date', fmtDate(d.effectiveDate)],
+        ]},
+        { title: '6. improvements at your own expense', rows: [
+          ['Note', 'List any improvements YOU paid for — these are excluded from the tribunal\'s market rent assessment. If none, write "none".'],
+        ]},
+        { title: '7. your view of the rent', rows: [
+          ['Suggested approach', 'State the rent you believe is fair based on your comparable evidence (see comparables worksheet), and reference the specific comparable properties that support this figure.'],
+        ]},
+      ];
+
+      sections.forEach(section => {
+        y = PDF.heading(doc, section.title, x, y);
+        section.rows.forEach(([label, value]) => {
+          y = PDF.para(doc, label, x, y, { bold: true, color: PDF.ink, size: 9.5 });
+          y = PDF.para(doc, value, x + 4, y, { size: 9.5, width: PDF.contentWidth - 4 });
+          y = PDF.spacer(y, 1);
+        });
+        y = PDF.spacer(y, 3);
+      });
+
+      y = PDF.heading(doc, 'documents to attach', x, y);
+      y = PDF.checkbox(doc, 'Your Section 13 notice', x, y);
+      y = PDF.checkbox(doc, 'Your tenancy agreement', x, y);
+      y = PDF.checkbox(doc, 'Your comparable property evidence (see comparables worksheet)', x, y);
+      y = PDF.checkbox(doc, 'Photos of the property, if relevant to its condition', x, y);
+
+      PDF.footer(doc, 1);
+      return doc;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 4. EVIDENCE CHECKLIST
+    // ─────────────────────────────────────────────────────────────────────────
+    function generateChecklistPDF(d) {
+      const doc = PDF.newDoc();
+      const x = PDF.margin;
+      let y = PDF.header(doc, 'evidence checklist', 'Personalised to your situation');
+
+      y = PDF.heading(doc, 'before you submit', x, y);
+      y = PDF.checkbox(doc, 'Section 13 notice — checked it uses the correct form and gives at least 2 months\' notice', x, y);
+      y = PDF.checkbox(doc, 'Tenancy agreement — a copy ready to attach', x, y);
+      y = PDF.checkbox(doc, `Comparable properties — at least 3 similar properties in your area (you currently have ${(d.comparables || []).length})`, x, y);
+
+      if (d.maintenance) {
+        y = PDF.checkbox(doc, 'Photos of maintenance issues — dated, clear, showing the problem areas you described', x, y);
+        y = PDF.checkbox(doc, 'Written correspondence with your landlord about these issues, if any exists', x, y);
+      }
+
+      y = PDF.checkbox(doc, 'Landlord letter sent — consider sending your challenge letter before applying to the tribunal', x, y);
+      y = PDF.spacer(y, 4);
+
+      y = PDF.heading(doc, 'your key dates', x, y);
+      y = PDF.para(doc, `Notice received: ${fmtDate(d.noticeDate)}`, x, y, { color: PDF.ink });
+      y = PDF.para(doc, `Increase takes effect: ${fmtDate(d.effectiveDate)}`, x, y, { color: PDF.ink, bold: true });
+      y = PDF.para(doc, `Tribunal application deadline: before the effective date above`, x, y, { color: PDF.ink, bold: true });
+      y = PDF.spacer(y, 4);
+
+      y = PDF.heading(doc, 'when you submit', x, y);
+      y = PDF.checkbox(doc, 'Application submitted via GOV.UK, email, or post', x, y);
+      y = PDF.checkbox(doc, 'Copy of application sent to landlord on the same day', x, y);
+      y = PDF.checkbox(doc, '£47 fee paid (or Help with Fees application submitted)', x, y);
+      y = PDF.checkbox(doc, 'Copies of everything kept for your own records', x, y);
+      y = PDF.spacer(y, 4);
+
+      y = PDF.heading(doc, 'after you submit', x, y);
+      y = PDF.checkbox(doc, 'Continue paying your current rent — the new rent does not apply while pending', x, y);
+      y = PDF.checkbox(doc, 'Watch for your landlord\'s response (Form Rents 1A) — they have 28 days', x, y);
+      y = PDF.checkbox(doc, 'Decide whether to reply (Form Rents 1B) — you have 14 days if they respond', x, y);
+
+      PDF.footer(doc, 1);
+      return doc;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 5. COMPARABLES WORKSHEET
+    // ─────────────────────────────────────────────────────────────────────────
+    function generateComparablesPDF(d) {
+      const doc = PDF.newDoc();
+      const x = PDF.margin;
+      let y = PDF.header(doc, 'comparables worksheet', 'Formatted summary for your tribunal application');
+
+      const comps = d.comparables || [];
+
+      y = PDF.para(doc, `Your property: ${BEDROOM_LABELS_FULL[d.bedrooms] || '[bedrooms]'} at ${d.postcode || '[postcode]'}, currently ${fmtMoney(d.currentRent)}/month, proposed increase to ${fmtMoney(d.newRent)}/month.`, x, y);
+      y = PDF.spacer(y, 4);
+
+      if (comps.length === 0) {
+        y = PDF.heading(doc, 'no comparables added yet', x, y);
+        y = PDF.para(doc, `You haven't added any comparable properties. This is the single most important piece of evidence for your tribunal application.`, x, y);
+        y = PDF.spacer(y, 2);
+        y = PDF.para(doc, `How to find comparables:`, x, y, { bold: true, color: PDF.ink });
+        y = PDF.para(doc, `1. Go to Rightmove or Zoopla and search for properties to rent in your postcode area`, x, y);
+        y = PDF.para(doc, `2. Filter by the same number of bedrooms as your property`, x, y);
+        y = PDF.para(doc, `3. Look for properties listed within the last 3-6 months`, x, y);
+        y = PDF.para(doc, `4. Save or screenshot at least 3-5 listings that closely match your property type and location`, x, y);
+        y = PDF.para(doc, `5. Note the address (or street if the full address isn't shown), monthly rent, bedrooms, and date listed for each`, x, y);
+        y = PDF.spacer(y, 2);
+        y = PDF.para(doc, `Once you have these, you can add them when revisiting this tool, or list them directly on your Form Rents 1 application and attach the listings as evidence.`, x, y);
+      } else {
+        y = PDF.heading(doc, `your comparable properties (${comps.length})`, x, y);
+
+        comps.forEach((c, i) => {
+          if (!c.addr && !c.rent) return;
+          if (y > 250) {
+            PDF.footer(doc, doc.internal.getNumberOfPages());
+            doc.addPage();
+            y = 25;
+          }
+
+          doc.setFillColor(234, 240, 228);
+          doc.roundedRect(x, y - 4, PDF.contentWidth, 26, 2, 2, 'F');
+
+          y = PDF.para(doc, `Comparable ${i + 1}`, x + 4, y + 2, { size: 8, color: PDF.green, bold: true });
+          y = PDF.para(doc, c.addr || '[address not provided]', x + 4, y + 2, { size: 10, color: PDF.ink, bold: true });
+
+          const detailsLine = [
+            c.rent ? fmtMoney(c.rent) + '/month' : null,
+            c.beds ? `${c.beds} bed` : null,
+            c.source ? `via ${c.source}` : null,
+          ].filter(Boolean).join('  ·  ');
+
+          y = PDF.para(doc, detailsLine, x + 4, y + 1, { size: 9, color: PDF.inkMid });
+          y += 7;
+        });
+
+        y = PDF.spacer(y, 2);
+        const validRents = comps.filter(c => c.rent && parseFloat(c.rent) > 0).map(c => parseFloat(c.rent));
+        if (validRents.length > 0) {
+          const avg = (validRents.reduce((a, b) => a + b, 0) / validRents.length).toFixed(0);
+          const min = Math.min(...validRents);
+          const max = Math.max(...validRents);
+          y = PDF.heading(doc, 'summary', x, y);
+          y = PDF.para(doc, `Average comparable rent: ${fmtMoney(avg)}/month`, x, y, { color: PDF.ink, bold: true });
+          y = PDF.para(doc, `Range: ${fmtMoney(min)} - ${fmtMoney(max)}/month`, x, y, { color: PDF.ink });
+          y = PDF.para(doc, `Your landlord's proposed rent: ${fmtMoney(d.newRent)}/month`, x, y, { color: PDF.ink });
+
+          if (parseFloat(d.newRent) > avg) {
+            const diff = (((d.newRent - avg) / avg) * 100).toFixed(1);
+            y = PDF.spacer(y, 1);
+            y = PDF.para(doc, `The proposed rent is approximately ${diff}% above the average of your comparable properties — this is the core of your case.`, x, y, { bold: true });
+          }
+        }
+      }
+
+      PDF.footer(doc, 1);
+      return doc;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 6. FAQ
+    // ─────────────────────────────────────────────────────────────────────────
+    function generateFAQPDF(d) {
+      const doc = PDF.newDoc();
+      const x = PDF.margin;
+      let y = PDF.header(doc, 'frequently asked questions', 'About the tribunal process');
+
+      const faqs = [
+        ['Can my landlord evict me for challenging?', 'No. Section 21 no-fault evictions have been abolished under the Renters Rights Act. Challenging a rent increase is your legal right and cannot be used as grounds for eviction.'],
+        ['What if I can\'t afford the £47 fee?', 'The Help with Fees scheme is available to tenants on low incomes and may reduce or waive the fee. Check your eligibility on GOV.UK before you pay.'],
+        ['Do I need a solicitor?', 'No. Most tenants represent themselves. The process is designed to be accessible, and the panel is used to hearing directly from tenants without legal representation.'],
+        ['What if my notice is invalid?', 'The increase cannot legally take effect. You can write to your landlord pointing out the defect, or apply to the tribunal to have the notice formally declared invalid.'],
+        ['Can I withdraw my application?', 'Yes — at any time before the tribunal sets the rent, with the tribunal\'s consent. If you reach an agreement with your landlord before a decision is made, you\'d want to withdraw.'],
+        ['Is there any risk the tribunal sets an even higher rent?', 'No. Under the Renters Rights Act, the tribunal cannot set rent above the figure your landlord proposed in the Section 13 notice. The worst outcome is that it confirms the proposed figure.'],
+        ['What do I pay while the case is pending?', 'Your current rent. The proposed new rent does not take effect until the tribunal has made its decision.'],
+        ['When does the new rent start if the tribunal rules in my favour?', 'From the next rent period after the tribunal issues its decision. It is not backdated — any months spent waiting at your old rent are yours to keep.'],
+      ];
+
+      faqs.forEach(([q, a]) => {
+        y = PDF.heading(doc, q, x, y);
+        y = PDF.para(doc, a, x, y);
+        y = PDF.spacer(y, 3);
+      });
+
+      PDF.footer(doc, 1);
+      return doc;
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // BUNDLE & DOWNLOAD
+    // ─────────────────────────────────────────────────────────────────────────
+    async function downloadPack(d) {
+      const zip = new JSZip();
+
+      zip.file('1-tribunal-guide.pdf', generateGuidePDF(d).output('blob'));
+      zip.file('2-landlord-letter.pdf', generateLetterPDF(d).output('blob'));
+      zip.file('3-form-rents1-walkthrough.pdf', generateFormWalkthroughPDF(d).output('blob'));
+      zip.file('4-evidence-checklist.pdf', generateChecklistPDF(d).output('blob'));
+      zip.file('5-comparables-worksheet.pdf', generateComparablesPDF(d).output('blob'));
+      zip.file('6-faq.pdf', generateFAQPDF(d).output('blob'));
+
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, 'smart-renter-tribunal-pack.zip');
+
+      // Update UI to show download complete
+      const payCard = document.querySelector('.pay-card');
+      if (payCard) {
+        payCard.innerHTML += `
+          <div style="text-align:center; width:100%; margin-top:1rem;">
+            <button onclick="downloadPack(data)" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.7); padding:10px 20px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer;">
+              download again
+            </button>
+          </div>
+        `;
+      }
+    }
+  </script>
+
+</body>
+</html>
